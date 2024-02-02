@@ -1,10 +1,12 @@
 import numpy as np
 import matplotlib.pyplot as plt
-
 import random
 
 
 def createRandomGrid(length, height, probability):
+
+#creates a numpy array of desired height and lenght
+#takes in a probability argument whch is used to randomly select alive cells
 
     gridShape = (length, height)
     grid = np.zeros(gridShape)
@@ -19,7 +21,7 @@ def createRandomGrid(length, height, probability):
 
 def updateValue(element, aliveNeighbours):
     """
-    update value based on rules
+    Rules:
     1. Birth rule: An element that is currently 0 with exactly 3 neighbours is set to 1.
     2. Death rule 1 (loneliness): An element that is currently 1 with 1 or less neighbours is set to 0.
     3. Death rule 2 (starvation): An element that is currently 1 with 4 or more neighbours is set to 0.
@@ -35,6 +37,7 @@ def updateValue(element, aliveNeighbours):
     return element
 
 def updateGrid(grid):
+    #creates a copy of grid to maintain previous state
 
     newGrid = np.copy(grid)
     gridShape = np.shape(grid)
@@ -42,22 +45,17 @@ def updateGrid(grid):
     for row in range(gridShape[0]):
         for column in range(gridShape[1]):
             element = grid[row, column]
+            #max and min prevent going over index of grid array 
             neighbours = grid[max(0, row-1):min(gridShape[0], row+2), max(0, column-1):min(gridShape[1], column+2)]
+            #np.sum() sums all selected cells and then remove current element
             aliveNeighbourSum = np.sum(neighbours) - element
             newGrid[row, column] = updateValue(element, aliveNeighbourSum)
 
     return newGrid
 
-def display(grid):
-
-    ax = plt.axes()
-    ax.set_axis_off()
-
-    ax.imshow(grid, interpolation='none', cmap='RdPu')
-    plt.pause(0.1)
 
 def display(ax, grid):
-
+    #clear axis and then display current grid using imshow() with cmap used for colour coding
     ax.clear()
     ax.set_axis_off()
     ax.imshow(grid, interpolation='none', cmap='RdPu')
@@ -80,7 +78,7 @@ def main():
 
 def testUpdateGrid():
 
-    # Assertion for Initial Grid 1 (3x3)
+    # Assertion for differeent scenarios 
     assert (updateGrid(np.array([[1, 1, 0],
                                 [0, 1, 0],
                                 [0, 1, 1]], dtype=np.int8)) == 
@@ -88,7 +86,6 @@ def testUpdateGrid():
                     [0, 0, 0],
                     [0, 1, 1]], dtype=np.int8)).all() == True
 
-    # Assertion for Initial Grid 2 (4x4)
     assert (updateGrid(np.array([[1, 1, 0, 0],
                                 [1, 0, 1, 1],
                                 [1, 0, 1, 0],
@@ -98,7 +95,6 @@ def testUpdateGrid():
                     [0, 0, 0, 0],
                     [0, 1, 1, 1]], dtype=np.int8)).all() == True
 
-    # Assertion for Initial Grid 3 (5x5)
     assert (updateGrid(np.array([[0, 1, 1, 1, 0],
                                 [0, 0, 1, 0, 1],
                                 [0, 0, 1, 1, 0],], dtype=np.int8)) ==
@@ -106,7 +102,6 @@ def testUpdateGrid():
                     [0, 0, 0, 0, 1],
                     [0, 0, 1, 1, 0],], dtype=np.int8)).all() == True
 
-    # Assertion for Initial Grid 4 (6x6)
     assert (updateGrid(np.array([[1, 0, 0, 1, 1, 1],
                                 [0, 1, 0, 0, 0, 0],], dtype=np.int8)) == 
             np.array([[0, 0, 0, 0, 1, 0],
@@ -120,3 +115,4 @@ def test():
 
 if __name__ == "__main__":
     main()
+
